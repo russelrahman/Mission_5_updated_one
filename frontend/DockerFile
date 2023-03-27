@@ -1,0 +1,13 @@
+From node:latest
+
+WORKDIR /app
+
+RUN npm install -g next
+
+COPY package*.json ./
+
+Copy . .
+
+EXPOSE 3000
+
+CMD ["npm","run", "dev"]

@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  image_db:
+    build:
+      context: ./Image_DB
+      dockerfile: Dockerfile
+    image: my-imagedb
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./Image_DB:/app
+    environment:
+      - MONGODB_URI=mongodb://db:27017/test
+  
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.login
+    image: my-login-backend
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - MONGODB_URI=mongodb://db:27017/userDemoDB
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: DockerFile
+    image: my-react
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend:/app
+    environment:
+      - REACT_APP_API_URL=http://api:3001
+      - REACT_APP_LOGIN_API_URL=http://api:5000
+    depends_on:
+      - image_db 
+      - backend
